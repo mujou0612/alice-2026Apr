@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>慢光之境 - 藝術作品集</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #faf8f5;
+    --text: #2c2c2c;
+    --text-light: #6b6b6b;
+    --accent: #8b6f4e;
+    --accent-light: #c4a882;
+    --border: #e8e2da;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Serif TC', serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .header {
+    text-align: center;
+    padding: 50px 20px 30px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+  }
+  .header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .header .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--text-light);
+    letter-spacing: 3px;
+  }
+  .header .info {
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+  }
+
+  .toolbar {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+  }
+  .toolbar .save-status {
+    font-size: 0.8rem;
+    color: var(--accent-light);
+    margin-right: auto;
+  }
+  .toolbar button {
+    font-family: 'Noto Serif TC', serif;
+    padding: 8px 22px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .toolbar button:hover { background: #7a5f40; }
+  .toolbar button.btn-outline {
+    background: transparent;
+    color: var(--accent);
+  }
+  .toolbar button.btn-outline:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px 30px;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 4px;
+    display: inline-block;
+    padding: 0 25px;
+    position: relative;
+  }
+  .section-header h2::before,
+  .section-header h2::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 50px;
+    height: 1px;
+    background: var(--accent-light);
+  }
+  .section-header h2::before { right: 100%; }
+  .section-header h2::after { left: 100%; }
+  .section-desc {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 6px;
+    font-style: italic;
+  }
+  .section-count {
+    font-size: 0.78rem;
+    color: var(--accent-light);
+    margin-top: 3px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 auto;
+    max-width: 1400px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  thead th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 10px 10px;
+    text-align: center;
+    white-space: nowrap;
+    border-right: 1px solid rgba(255,255,255,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  thead th:last-child { border-right: none; }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: #fdf9f4; }
+  tbody tr:last-child { border-bottom: none; }
+  td {
+    padding: 6px 8px;
+    vertical-align: middle;
+    font-size: 0.85rem;
+    border-right: 1px solid var(--border);
+  }
+  td:last-child { border-right: none; }
+
+  .col-no {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    width: 50px;
+  }
+  .col-img {
+    text-align: center;
+    width: 110px;
+    padding: 4px;
+  }
+  .col-img img {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid #eee;
+    background: #fafafa;
+    transition: transform 0.2s;
+  }
+  .col-img img:hover {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  input[type="text"] {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.84rem;
+    border: 1px solid transparent;
+    border-bottom: 1px dashed var(--border);
+    background: transparent;
+    padding: 3px 6px;
+    width: 100%;
+    color: var(--text);
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  input[type="text"]:hover { border-color: var(--accent-light); }
+  input[type="text"]:focus {
+    outline: none;
+    border: 1px solid var(--accent);
+    background: #fffdf8;
+    box-shadow: 0 0 0 2px rgba(139,111,78,0.1);
+  }
+  input[type="text"]::placeholder { color: #ccc; font-style: italic; }
+
+  .col-series { min-width: 100px; }
+  .col-nfs {
+    text-align: center;
+    width: 50px;
+  }
+  .col-nfs input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+  .col-price { width: 120px; }
+  .col-price input {
+    text-align: right;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .col-buyer { min-width: 220px; }
+  .buyer-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+  .buyer-row:last-child { margin-bottom: 0; }
+  .buyer-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    white-space: nowrap;
+    min-width: 42px;
+  }
+  .buyer-row input { flex: 1; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img {
+    max-width: 80vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    cursor: default;
+  }
+  .lightbox .lb-close {
+    position: absolute;
+    top: 18px; right: 24px;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    z-index: 1010;
+    line-height: 1;
+  }
+  .lightbox .lb-close:hover { opacity: 1; }
+  .lightbox .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    z-index: 1010;
+    user-select: none;
+    padding: 20px 16px;
+    line-height: 1;
+  }
+  .lightbox .lb-nav:hover { opacity: 1; }
+  .lightbox .lb-prev { left: 10px; }
+  .lightbox .lb-next { right: 10px; }
+  .lightbox .lb-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 2px;
+  }
+  .lightbox .lb-rotate {
+    position: absolute;
+    top: 18px; left: 24px;
+    color: #fff;
+    font-size: 1.4rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    z-index: 1010;
+    line-height: 1;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox .lb-rotate:hover { opacity: 1; background: rgba(255,255,255,0.25); }
+  #lightbox-img {
+    transition: transform 0.3s ease;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-light);
+    font-size: 0.82rem;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 2000;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media print {
+    .lightbox { display: none !important; }
+    .toolbar { display: none; }
+    .toast { display: none; }
+    body { background: #fff; }
+    input[type="text"] { border: none; border-bottom: 1px solid #ccc; }
+  }
+  @media (max-width: 768px) {
+    .header h1 { font-size: 1.6rem; letter-spacing: 4px; }
+    table { font-size: 0.78rem; }
+    .col-img img { width: 70px; height: 70px; }
+    td { padding: 4px 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>慢光之境</h1>
+  <div class="subtitle">Original Artwork Portfolio</div>
+  <div class="info">2026/4/23~4/26 水彩畫作系列</div>
+</div>
+
+<div class="toolbar">
+  <span class="save-status" id="saveStatus"></span>
+  <button class="btn-outline" onclick="clearAll()">清除所有填寫</button>
+  <button class="btn-outline" onclick="exportExcel()">匯出 Excel</button>
+  <button onclick="saveData()">儲存資料</button>
+</div>
+
+<div id="content"></div>
+
+<div class="footer">
+  <p>AH &copy; 2026 &nbsp;|&nbsp; 所有作品均為原創手繪</p>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-rotate" onclick="rotateLightbox()">↺</button>
+  <span class="lb-close" onclick="closeLightbox()">&times;</span>
+  <span class="lb-nav lb-prev" onclick="navLightbox(-1)">&#8249;</span>
+  <img id="lightbox-img" src="" alt="放大圖片">
+  <span class="lb-nav lb-next" onclick="navLightbox(1)">&#8250;</span>
+  <span class="lb-counter" id="lbCounter"></span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+const FILE_PREFIX = 'LINE_ALBUM_423-426畫作_260412_';
+const STORAGE_KEY = 'alice-paint-portfolio-v2';
+
+const seriesData = [
+  {
+    name: '蝴蝶',
+    desc: '翩翩起舞的彩蝶與蛻變精靈',
+    items: [
+      [18, 2800], [25, 2400], [65, 2400], [70, 2400], [74, 2400],
+      [73, 2400], [26, 1800], [27, 1800], [28, 1800], [22, 1800],
+      [58, 1800], [59, 1800], [24, 1600], [66, 1600], [86, 1600],
+      [20, 1600], [30, 1600], [31, 1200], [29, 1200], [63, 1200],
+      [60, 1200], [64, 1200], [67, 1200], [61, 1200], [62, 1200],
+      [69, 1200]
+    ]
+  },
+  {
+    name: '鯨豚',
+    desc: '深海的溫柔巨人 — 悠遊於想像與現實之間',
+    items: [
+      [5,  4800], [8,  3600], [14, 2400], [42, 1200], [43, 1200],
+      [41, 1200], [45, 1200], [44, 1200], [46, 1200], [47, 1200]
+    ]
+  },
+  {
+    name: '花',
+    desc: '盛放的色彩 — 從熱帶花園到抽象花語',
+    items: [
+      [12, 8000], [10, 2800], [1,  2800], [71, 2400], [72, 2400],
+      [76, 1600], [78,    0], [79,    0], [80,    0], [81,    0]
+    ]
+  },
+  {
+    name: '生活',
+    desc: '日常的詩意 — 居家角落、街角店鋪與生活片刻',
+    items: [
+      [4,  4800], [7,  4800], [9,  3600], [3,  2400], [75, 2400],
+      [32, 1800], [55, 1800], [17, 1600], [19, 1600], [23, 1600],
+      [52, 1600], [51, 1600], [53, 1600], [50, 1600], [54, 1600],
+      [21, 1200], [48, 1200], [56, 1200], [57, 1200], [49, 1200],
+      [16,  800], [15,  800], [82,  600], [83,  300], [84,  300]
+    ]
+  },
+  {
+    name: '植物',
+    desc: '綠意盎然 — 仙人掌、觀葉植物與盆栽之美',
+    items: [
+      [11, 8000], [6,  4800], [85, 3600], [2,  3600], [13, 3600],
+      [40, 1800], [35, 1600], [37, 1600], [77, 1600], [36, 1200],
+      [39, 1200], [33, 1200], [34, 1200], [38, 1200]
+    ]
+  }
+];
+
+let globalIndex = 0;
+
+function buildAll() {
+  const container = document.getElementById('content');
+  let html = '';
+  globalIndex = 0;
+
+  seriesData.forEach((series, si) => {
+    html += `<div class="section">
+      <div class="section-header">
+        <h2>${series.name}系列</h2>
+        <div class="section-desc">${series.desc}</div>
+        <div class="section-count">共 ${series.items.length} 件作品</div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>編號</th><th>圖片</th><th>系列</th><th>非賣</th><th>價格</th><th>買家聯繫資料</th>
+        </tr></thead>
+        <tbody>`;
+
+    series.items.forEach(([fileNum, price]) => {
+      globalIndex++;
+      const padNo = String(globalIndex).padStart(2, '0');
+      html += `<tr>
+        <td class="col-no">${padNo}</td>
+        <td class="col-img"><img src="${FILE_PREFIX}${fileNum}.jpg" onclick="openLightbox(this)"></td>
+        <td class="col-series"><input type="text" data-field="series_f${fileNum}" value="${series.name}" placeholder="（系列）"></td>
+        <td class="col-nfs"><input type="checkbox" data-field="nfs_f${fileNum}"></td>
+        <td class="col-price"><input type="text" data-field="price_f${fileNum}" value="$${price.toLocaleString()}" placeholder="0"></td>
+        <td class="col-buyer">
+          <div class="buyer-row"><span class="buyer-label">姓名：</span><input type="text" data-field="buyer_name_f${fileNum}" placeholder=""></div>
+          <div class="buyer-row"><span class="buyer-label">電話：</span><input type="text" data-field="buyer_phone_f${fileNum}" placeholder=""></div>
+          <div class="buyer-row"><span class="buyer-label">地址：</span><input type="text" data-field="buyer_addr_f${fileNum}" placeholder=""></div>
+        </td>
+      </tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+    if (si < seriesData.length - 1) html += '<hr class="divider">';
+  });
+
+  container.innerHTML = html;
+}
+
+const ROTATE_KEY = 'alice-paint-rotations';
+const MIGRATED_KEY = 'alice-paint-migrated-v3';
+let rotations = {};
+
+// 舊排序的位置→檔案編號對照（排序前的順序）
+const OLD_ORDER = [
+  18,20,22,24,25,26,27,28,29,30,31,58,59,60,61,62,63,64,65,66,67,69,70,73,74,86,
+  5,8,14,41,42,43,44,45,46,47,
+  1,10,12,71,72,76,78,79,80,81,
+  3,4,7,9,15,16,17,19,21,23,32,48,49,50,51,52,53,54,55,56,57,75,82,83,84,
+  2,6,11,13,33,34,35,36,37,38,39,40,77,85
+];
+
+function migrateData() {
+  if (localStorage.getItem(MIGRATED_KEY)) return;
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) { localStorage.setItem(MIGRATED_KEY, '1'); return; }
+  const old = JSON.parse(raw);
+  // 檢查是否為舊格式（位置索引 key）
+  if (!old['price_1'] && !old['title_1'] && !old['series_1']) {
+    localStorage.setItem(MIGRATED_KEY, '1');
+    return;
+  }
+  const migrated = {};
+  const fields = ['title', 'series', 'price', 'buyer_name', 'buyer_phone', 'buyer_addr'];
+  for (let i = 1; i <= 85; i++) {
+    const fileNum = OLD_ORDER[i - 1];
+    fields.forEach(f => {
+      const oldKey = `${f}_${i}`;
+      const newKey = `${f}_f${fileNum}`;
+      if (old[oldKey] !== undefined) migrated[newKey] = old[oldKey];
+    });
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+  localStorage.setItem(MIGRATED_KEY, '1');
+}
+
+function saveData() {
+  const inputs = document.querySelectorAll('input[data-field]');
+  const data = {};
+  inputs.forEach(inp => {
+    if (inp.type === 'checkbox') data[inp.dataset.field] = inp.checked;
+    else data[inp.dataset.field] = inp.value;
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  localStorage.setItem(ROTATE_KEY, JSON.stringify(rotations));
+  showToast('已儲存');
+  document.getElementById('saveStatus').textContent = '上次儲存：' + new Date().toLocaleTimeString('zh-TW');
+}
+
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    const data = JSON.parse(raw);
+    Object.entries(data).forEach(([field, val]) => {
+      const inp = document.querySelector(`input[data-field="${field}"]`);
+      if (!inp) return;
+      if (inp.type === 'checkbox') inp.checked = !!val;
+      else if (val) inp.value = val;
+    });
+  }
+  const rotRaw = localStorage.getItem(ROTATE_KEY);
+  if (rotRaw) {
+    rotations = JSON.parse(rotRaw);
+    getAllImages().forEach(img => {
+      const key = img.src.split('/').pop();
+      if (rotations[key]) img.style.transform = `rotate(${rotations[key]}deg)`;
+    });
+  }
+  if (raw || rotRaw) document.getElementById('saveStatus').textContent = '已載入先前儲存的資料';
+}
+
+function clearAll() {
+  if (!confirm('確定要清除所有填寫的資料嗎？（價格與系列會恢復預設值）')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(ROTATE_KEY);
+  localStorage.removeItem(MIGRATED_KEY);
+  rotations = {};
+  buildAll();
+  document.getElementById('saveStatus').textContent = '已清除';
+  showToast('已清除所有填寫資料');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+let autoSaveTimer;
+document.addEventListener('input', function(e) {
+  if (e.target.matches('input[data-field]')) {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(saveData, 3000);
+  }
+});
+document.addEventListener('change', function(e) {
+  if (e.target.matches('input[type="checkbox"][data-field]')) {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(saveData, 3000);
+  }
+});
+
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    saveData();
+  }
+  if (e.key === 'Escape') closeLightbox();
+  if (document.getElementById('lightbox').classList.contains('active')) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); navLightbox(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navLightbox(-1); }
+  }
+});
+
+let lbIndex = 0;
+let lbRotation = 0;
+function getAllImages() {
+  return Array.from(document.querySelectorAll('.col-img img'));
+}
+function getImgKey(img) {
+  return img.src.split('/').pop();
+}
+function openLightbox(img) {
+  const imgs = getAllImages();
+  lbIndex = imgs.indexOf(img);
+  const key = getImgKey(imgs[lbIndex]);
+  lbRotation = rotations[key] || 0;
+  showLightboxImage();
+  document.getElementById('lightbox').classList.add('active');
+}
+function showLightboxImage() {
+  const imgs = getAllImages();
+  const lbImg = document.getElementById('lightbox-img');
+  lbImg.src = imgs[lbIndex].src;
+  const key = getImgKey(imgs[lbIndex]);
+  lbRotation = rotations[key] || 0;
+  lbImg.style.transform = `rotate(${lbRotation}deg)`;
+  document.getElementById('lbCounter').textContent = (lbIndex + 1) + ' / ' + imgs.length;
+}
+function navLightbox(dir) {
+  const imgs = getAllImages();
+  lbIndex = (lbIndex + dir + imgs.length) % imgs.length;
+  showLightboxImage();
+}
+function rotateLightbox() {
+  lbRotation = (lbRotation - 90) % 360;
+  const imgs = getAllImages();
+  const key = getImgKey(imgs[lbIndex]);
+  rotations[key] = lbRotation;
+  document.getElementById('lightbox-img').style.transform = `rotate(${lbRotation}deg)`;
+  imgs[lbIndex].style.transform = `rotate(${lbRotation}deg)`;
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(saveData, 3000);
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+function exportExcel() {
+  const rows = [['編號', '系列', '非賣', '價格', '買家姓名', '買家電話', '寄送地址']];
+  let idx = 0;
+  seriesData.forEach(series => {
+    series.items.forEach(([fileNum]) => {
+      idx++;
+      const g = (f) => {
+        const inp = document.querySelector(`input[data-field="${f}_f${fileNum}"]`);
+        return inp ? inp.value : '';
+      };
+      const nfsEl = document.querySelector(`input[data-field="nfs_f${fileNum}"]`);
+      const nfs = nfsEl && nfsEl.checked ? '是' : '';
+      rows.push([
+        idx,
+        g('series'),
+        nfs,
+        g('price'),
+        g('buyer_name'),
+        g('buyer_phone'),
+        g('buyer_addr')
+      ]);
+    });
+  });
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [
+    {wch:6}, {wch:10}, {wch:6}, {wch:12}, {wch:14}, {wch:16}, {wch:30}
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '慢光之境');
+  XLSX.writeFile(wb, '慢光之境_作品集.xlsx');
+  showToast('已匯出 Excel');
+}
+
+migrateData();
+buildAll();
+loadData();
+</script>
+
+</body>
+</html>
