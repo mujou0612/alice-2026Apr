@@ -134,8 +134,13 @@
     max-width: 1400px;
   }
 
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   table {
     width: 100%;
+    min-width: 640px;
     border-collapse: collapse;
     background: #fff;
     border: 1px solid var(--border);
@@ -199,6 +204,22 @@
   .col-img img:hover {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
+  .col-img .interactive-label {
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: #f5f0ea;
+    border: 1px dashed var(--accent-light);
+    border-radius: 3px;
+    padding: 6px;
+    line-height: 1.4;
+  }
 
   input[type="text"] {
     font-family: 'Noto Serif TC', serif;
@@ -221,16 +242,48 @@
   }
   input[type="text"]::placeholder { color: #ccc; font-style: italic; }
 
-  .col-series { min-width: 100px; }
+  .col-series { min-width: 90px; }
+  .col-series select {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.84rem;
+    border: 1px solid transparent;
+    border-bottom: 1px dashed var(--border);
+    background: transparent;
+    padding: 3px 4px;
+    width: 100%;
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .col-series select:hover { border-color: var(--accent-light); }
+  .col-series select:focus {
+    outline: none;
+    border: 1px solid var(--accent);
+    background: #fffdf8;
+  }
   .col-nfs {
     text-align: center;
-    width: 50px;
+    width: 44px;
   }
-  .col-nfs input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+  .nfs-toggle {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
     cursor: pointer;
-    accent-color: var(--accent);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .nfs-toggle:hover { background: rgba(139,111,78,0.08); }
+  .nfs-toggle.checked {
+    color: #c0392b;
+    font-size: 1rem;
+    font-weight: 700;
   }
   .col-price { width: 120px; }
   .col-price input {
@@ -373,11 +426,48 @@
     body { background: #fff; }
     input[type="text"] { border: none; border-bottom: 1px solid #ccc; }
   }
+  @media (max-width: 960px) {
+    .section { padding: 30px 10px 20px; }
+    .col-buyer { min-width: 160px; }
+    .col-series select { font-size: 0.78rem; }
+  }
   @media (max-width: 768px) {
+    .header { padding: 30px 16px 20px; }
     .header h1 { font-size: 1.6rem; letter-spacing: 4px; }
-    table { font-size: 0.78rem; }
-    .col-img img { width: 70px; height: 70px; }
-    td { padding: 4px 4px; }
+    .header .subtitle { font-size: 0.9rem; }
+    .toolbar { padding: 10px 12px; gap: 6px; }
+    .toolbar button { padding: 6px 14px; font-size: 0.78rem; }
+    .section { padding: 20px 8px 16px; }
+    .section-header h2 { font-size: 1.2rem; letter-spacing: 2px; }
+    .section-header h2::before, .section-header h2::after { width: 30px; }
+    table { font-size: 0.75rem; }
+    thead th { padding: 8px 4px; font-size: 0.75rem; letter-spacing: 0; }
+    td { padding: 4px 3px; }
+    .col-no { width: 32px; font-size: 0.75rem; }
+    .col-img { width: 72px; padding: 3px; }
+    .col-img img { width: 60px; height: 60px; }
+    .col-img .interactive-label { width: 60px; height: 60px; font-size: 0.65rem; padding: 2px; }
+    .col-nfs { width: 32px; }
+    .nfs-toggle { width: 24px; height: 24px; line-height: 24px; font-size: 0.78rem; }
+    .col-price { width: 80px; }
+    .col-series { min-width: 70px; }
+    .col-series select { font-size: 0.72rem; padding: 2px; }
+    .col-buyer { min-width: 140px; }
+    .buyer-label { font-size: 0.65rem; min-width: 32px; }
+    .buyer-row input { font-size: 0.72rem; }
+    input[type="text"] { font-size: 0.72rem; padding: 2px 4px; }
+    .footer { padding: 20px 12px; font-size: 0.75rem; }
+  }
+  @media (max-width: 480px) {
+    .header h1 { font-size: 1.2rem; letter-spacing: 2px; }
+    .section-header h2 { font-size: 1rem; }
+    .col-img { width: 56px; }
+    .col-img img { width: 48px; height: 48px; }
+    .col-img .interactive-label { width: 48px; height: 48px; font-size: 0.58rem; }
+    .col-no { width: 26px; }
+    .col-buyer { min-width: 110px; }
+    .buyer-label { display: none; }
+    .buyer-row input::placeholder { font-size: 0.65rem; }
   }
 </style>
 </head>
@@ -391,7 +481,6 @@
 
 <div class="toolbar">
   <span class="save-status" id="saveStatus"></span>
-  <button class="btn-outline" onclick="clearAll()">清除所有填寫</button>
   <button class="btn-outline" onclick="exportExcel()">匯出 Excel</button>
   <button onclick="saveData()">儲存資料</button>
 </div>
@@ -415,7 +504,7 @@
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
-const FILE_PREFIX = 'LINE_ALBUM_423-426畫作_260412_';
+const FILE_PREFIX = 'img/LINE_ALBUM_423-426畫作_260412_';
 const STORAGE_KEY = 'alice-paint-portfolio-v2';
 
 const seriesData = [
@@ -451,6 +540,7 @@ const seriesData = [
     name: '生活',
     desc: '日常的詩意 — 居家角落、街角店鋪與生活片刻',
     items: [
+      ['int_life', 3600, '互動作品：生活'], ['int_coffee', 3600, '互動作品：咖啡'],
       [4,  4800], [7,  4800], [9,  3600], [3,  2400], [75, 2400],
       [32, 1800], [55, 1800], [17, 1600], [19, 1600], [23, 1600],
       [52, 1600], [51, 1600], [53, 1600], [50, 1600], [54, 1600],
@@ -462,6 +552,7 @@ const seriesData = [
     name: '植物',
     desc: '綠意盎然 — 仙人掌、觀葉植物與盆栽之美',
     items: [
+      ['int_plant', 3600, '互動作品：植物'],
       [11, 8000], [6,  4800], [85, 3600], [2,  3600], [13, 3600],
       [40, 1800], [35, 1600], [37, 1600], [77, 1600], [36, 1200],
       [39, 1200], [33, 1200], [34, 1200], [38, 1200]
@@ -483,30 +574,44 @@ function buildAll() {
         <div class="section-desc">${series.desc}</div>
         <div class="section-count">共 ${series.items.length} 件作品</div>
       </div>
-      <table>
+      <div class="table-wrap"><table>
         <thead><tr>
           <th>編號</th><th>圖片</th><th>系列</th><th>非賣</th><th>價格</th><th>買家聯繫資料</th>
         </tr></thead>
         <tbody>`;
 
-    series.items.forEach(([fileNum, price]) => {
+    series.items.forEach((item) => {
+      const fileNum = item[0];
+      const price = item[1];
+      const label = item[2] || null;
+      const isInteractive = typeof fileNum === 'string';
+      const id = isInteractive ? fileNum : `f${fileNum}`;
       globalIndex++;
       const padNo = String(globalIndex).padStart(2, '0');
+      const imgCell = isInteractive
+        ? `<div class="interactive-label">${label}</div>`
+        : `<img src="${FILE_PREFIX}${fileNum}.jpg" onclick="openLightbox(this)">`;
       html += `<tr>
         <td class="col-no">${padNo}</td>
-        <td class="col-img"><img src="${FILE_PREFIX}${fileNum}.jpg" onclick="openLightbox(this)"></td>
-        <td class="col-series"><input type="text" data-field="series_f${fileNum}" value="${series.name}" placeholder="（系列）"></td>
-        <td class="col-nfs"><input type="checkbox" data-field="nfs_f${fileNum}"></td>
-        <td class="col-price"><input type="text" data-field="price_f${fileNum}" value="$${price.toLocaleString()}" placeholder="0"></td>
+        <td class="col-img">${imgCell}</td>
+        <td class="col-series"><select data-field="series_${id}">
+          <option value="蝴蝶"${series.name==='蝴蝶'?' selected':''}>蝴蝶</option>
+          <option value="鯨豚"${series.name==='鯨豚'?' selected':''}>鯨豚</option>
+          <option value="花"${series.name==='花'?' selected':''}>花</option>
+          <option value="生活"${series.name==='生活'?' selected':''}>生活</option>
+          <option value="植物"${series.name==='植物'?' selected':''}>植物</option>
+        </select></td>
+        <td class="col-nfs"><span class="nfs-toggle" data-field="nfs_${id}" onclick="toggleNfs(this)">-</span></td>
+        <td class="col-price"><input type="text" data-field="price_${id}" value="$${price.toLocaleString()}" placeholder="0"></td>
         <td class="col-buyer">
-          <div class="buyer-row"><span class="buyer-label">姓名：</span><input type="text" data-field="buyer_name_f${fileNum}" placeholder=""></div>
-          <div class="buyer-row"><span class="buyer-label">電話：</span><input type="text" data-field="buyer_phone_f${fileNum}" placeholder=""></div>
-          <div class="buyer-row"><span class="buyer-label">地址：</span><input type="text" data-field="buyer_addr_f${fileNum}" placeholder=""></div>
+          <div class="buyer-row"><span class="buyer-label">姓名：</span><input type="text" data-field="buyer_name_${id}" placeholder=""></div>
+          <div class="buyer-row"><span class="buyer-label">電話：</span><input type="text" data-field="buyer_phone_${id}" placeholder=""></div>
+          <div class="buyer-row"><span class="buyer-label">地址：</span><input type="text" data-field="buyer_addr_${id}" placeholder=""></div>
         </td>
       </tr>`;
     });
 
-    html += `</tbody></table></div>`;
+    html += `</tbody></table></div></div>`;
     if (si < seriesData.length - 1) html += '<hr class="divider">';
   });
 
@@ -551,11 +656,11 @@ function migrateData() {
 }
 
 function saveData() {
-  const inputs = document.querySelectorAll('input[data-field]');
   const data = {};
-  inputs.forEach(inp => {
-    if (inp.type === 'checkbox') data[inp.dataset.field] = inp.checked;
-    else data[inp.dataset.field] = inp.value;
+  document.querySelectorAll('[data-field]').forEach(el => {
+    const key = el.dataset.field;
+    if (el.classList.contains('nfs-toggle')) data[key] = el.classList.contains('checked');
+    else data[key] = el.value;
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   localStorage.setItem(ROTATE_KEY, JSON.stringify(rotations));
@@ -568,10 +673,13 @@ function loadData() {
   if (raw) {
     const data = JSON.parse(raw);
     Object.entries(data).forEach(([field, val]) => {
-      const inp = document.querySelector(`input[data-field="${field}"]`);
-      if (!inp) return;
-      if (inp.type === 'checkbox') inp.checked = !!val;
-      else if (val) inp.value = val;
+      const el = document.querySelector(`[data-field="${field}"]`);
+      if (!el) return;
+      if (el.classList.contains('nfs-toggle')) {
+        if (val) { el.classList.add('checked'); el.textContent = '✕'; }
+      } else if (val) {
+        el.value = val;
+      }
     });
   }
   const rotRaw = localStorage.getItem(ROTATE_KEY);
@@ -585,16 +693,6 @@ function loadData() {
   if (raw || rotRaw) document.getElementById('saveStatus').textContent = '已載入先前儲存的資料';
 }
 
-function clearAll() {
-  if (!confirm('確定要清除所有填寫的資料嗎？（價格與系列會恢復預設值）')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(ROTATE_KEY);
-  localStorage.removeItem(MIGRATED_KEY);
-  rotations = {};
-  buildAll();
-  document.getElementById('saveStatus').textContent = '已清除';
-  showToast('已清除所有填寫資料');
-}
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -603,15 +701,22 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+function toggleNfs(el) {
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✕' : '-';
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(saveData, 3000);
+}
+
 let autoSaveTimer;
 document.addEventListener('input', function(e) {
-  if (e.target.matches('input[data-field]')) {
+  if (e.target.matches('[data-field]')) {
     clearTimeout(autoSaveTimer);
     autoSaveTimer = setTimeout(saveData, 3000);
   }
 });
 document.addEventListener('change', function(e) {
-  if (e.target.matches('input[type="checkbox"][data-field]')) {
+  if (e.target.matches('select[data-field]')) {
     clearTimeout(autoSaveTimer);
     autoSaveTimer = setTimeout(saveData, 3000);
   }
@@ -680,14 +785,16 @@ function exportExcel() {
   const rows = [['編號', '系列', '非賣', '價格', '買家姓名', '買家電話', '寄送地址']];
   let idx = 0;
   seriesData.forEach(series => {
-    series.items.forEach(([fileNum]) => {
+    series.items.forEach((item) => {
+      const fileNum = item[0];
+      const id = typeof fileNum === 'string' ? fileNum : `f${fileNum}`;
       idx++;
       const g = (f) => {
-        const inp = document.querySelector(`input[data-field="${f}_f${fileNum}"]`);
-        return inp ? inp.value : '';
+        const el = document.querySelector(`[data-field="${f}_${id}"]`);
+        return el ? el.value : '';
       };
-      const nfsEl = document.querySelector(`input[data-field="nfs_f${fileNum}"]`);
-      const nfs = nfsEl && nfsEl.checked ? '是' : '';
+      const nfsEl = document.querySelector(`[data-field="nfs_${id}"]`);
+      const nfs = nfsEl && nfsEl.classList.contains('checked') ? '是' : '';
       rows.push([
         idx,
         g('series'),
@@ -709,9 +816,29 @@ function exportExcel() {
   showToast('已匯出 Excel');
 }
 
+function getPrice(tr) {
+  const inp = tr.querySelector('[data-field^="price_f"]');
+  return inp ? Number(inp.value.replace(/[$,]/g, '')) || 0 : 0;
+}
+
+function sortAllTables() {
+  document.querySelectorAll('table tbody').forEach(tbody => {
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((a, b) => getPrice(b) - getPrice(a));
+    rows.forEach(r => tbody.appendChild(r));
+  });
+  // 重新編號
+  let idx = 0;
+  document.querySelectorAll('table tbody tr').forEach(tr => {
+    idx++;
+    tr.querySelector('.col-no').textContent = String(idx).padStart(2, '0');
+  });
+}
+
 migrateData();
 buildAll();
 loadData();
+sortAllTables();
 </script>
 
 </body>
