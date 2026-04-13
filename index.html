@@ -188,6 +188,7 @@
   }
   .col-img {
     text-align: center;
+    vertical-align: middle;
     width: 150px;
     padding: 4px;
   }
@@ -272,14 +273,10 @@
     height: 28px;
     line-height: 28px;
     text-align: center;
-    cursor: pointer;
-    border-radius: 4px;
     font-size: 0.85rem;
     color: var(--text-light);
-    transition: all 0.2s;
     user-select: none;
   }
-  .nfs-toggle:hover { background: rgba(139,111,78,0.08); }
   .nfs-toggle.checked {
     color: #c0392b;
     font-size: 1rem;
@@ -464,6 +461,7 @@
 <script>
 const FILE_PREFIX = 'img/LINE_ALBUM_423-426畫作_260412_';
 const STORAGE_KEY = 'alice-paint-portfolio-v2';
+const NFS_SET = new Set([18, 25, 86, 30, 12, 9, 11]);
 
 const seriesData = [
   {
@@ -559,7 +557,7 @@ function buildAll() {
           <option value="生活"${series.name==='生活'?' selected':''}>生活</option>
           <option value="植物"${series.name==='植物'?' selected':''}>植物</option>
         </select></td>
-        <td class="col-nfs"><span class="nfs-toggle" data-field="nfs_${id}" onclick="toggleNfs(this)">-</span></td>
+        <td class="col-nfs"><span class="nfs-toggle${typeof fileNum === 'number' && NFS_SET.has(fileNum) ? ' checked' : ''}">${typeof fileNum === 'number' && NFS_SET.has(fileNum) ? '✓' : '-'}</span></td>
         <td class="col-price"><span class="price-display" data-field="price_${id}">$${price.toLocaleString()}</span></td>
       </tr>`;
     });
@@ -611,8 +609,7 @@ function saveData() {
   document.querySelectorAll('[data-field]').forEach(el => {
     const key = el.dataset.field;
     if (key.startsWith('price_')) return;
-    if (el.classList.contains('nfs-toggle')) data[key] = el.classList.contains('checked');
-    else if (el.value !== undefined) data[key] = el.value;
+    if (el.value !== undefined) data[key] = el.value;
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   showToast('已儲存');
@@ -626,9 +623,7 @@ function loadData() {
     Object.entries(data).forEach(([field, val]) => {
       const el = document.querySelector(`[data-field="${field}"]`);
       if (!el) return;
-      if (el.classList.contains('nfs-toggle')) {
-        if (val) { el.classList.add('checked'); el.textContent = '✕'; }
-      } else if (val) {
+      if (val) {
         el.value = val;
       }
     });
@@ -644,12 +639,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-function toggleNfs(el) {
-  el.classList.toggle('checked');
-  el.textContent = el.classList.contains('checked') ? '✕' : '-';
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(saveData, 3000);
-}
 
 let autoSaveTimer;
 document.addEventListener('input', function(e) {
@@ -717,8 +706,7 @@ function exportExcel() {
         if (!el) return '';
         return el.value !== undefined ? el.value : el.textContent;
       };
-      const nfsEl = document.querySelector(`[data-field="nfs_${id}"]`);
-      const nfs = nfsEl && nfsEl.classList.contains('checked') ? '是' : '';
+      const nfs = typeof fileNum === 'number' && NFS_SET.has(fileNum) ? '是' : '';
       rows.push([
         idx,
         g('series'),
