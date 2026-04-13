@@ -286,10 +286,13 @@
     font-weight: 700;
   }
   .col-price { width: 120px; }
-  .col-price input {
+  .price-display {
+    display: block;
     text-align: right;
     font-weight: 600;
     color: var(--accent);
+    padding: 3px 6px;
+    font-size: 0.84rem;
   }
   .col-buyer { min-width: 220px; }
   .buyer-row {
@@ -365,29 +368,6 @@
     font-size: 0.85rem;
     font-family: 'Cormorant Garamond', serif;
     letter-spacing: 2px;
-  }
-  .lightbox .lb-rotate {
-    position: absolute;
-    top: 18px; left: 24px;
-    color: #fff;
-    font-size: 1.4rem;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    z-index: 1010;
-    line-height: 1;
-    background: rgba(255,255,255,0.15);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .lightbox .lb-rotate:hover { opacity: 1; background: rgba(255,255,255,0.25); }
-  #lightbox-img {
-    transition: transform 0.3s ease;
   }
 
   .footer {
@@ -492,7 +472,6 @@
 </div>
 
 <div class="lightbox" id="lightbox">
-  <button class="lb-rotate" onclick="rotateLightbox()">↺</button>
   <span class="lb-close" onclick="closeLightbox()">&times;</span>
   <span class="lb-nav lb-prev" onclick="navLightbox(-1)">&#8249;</span>
   <img id="lightbox-img" src="" alt="放大圖片">
@@ -602,7 +581,7 @@ function buildAll() {
           <option value="植物"${series.name==='植物'?' selected':''}>植物</option>
         </select></td>
         <td class="col-nfs"><span class="nfs-toggle" data-field="nfs_${id}" onclick="toggleNfs(this)">-</span></td>
-        <td class="col-price"><input type="text" data-field="price_${id}" value="$${price.toLocaleString()}" placeholder="0"></td>
+        <td class="col-price"><span class="price-display" data-field="price_${id}">$${price.toLocaleString()}</span></td>
         <td class="col-buyer">
           <div class="buyer-row"><span class="buyer-label">姓名：</span><input type="text" data-field="buyer_name_${id}" placeholder=""></div>
           <div class="buyer-row"><span class="buyer-label">電話：</span><input type="text" data-field="buyer_phone_${id}" placeholder=""></div>
@@ -618,9 +597,7 @@ function buildAll() {
   container.innerHTML = html;
 }
 
-const ROTATE_KEY = 'alice-paint-rotations';
 const MIGRATED_KEY = 'alice-paint-migrated-v3';
-let rotations = {};
 
 // 舊排序的位置→檔案編號對照（排序前的順序）
 const OLD_ORDER = [
@@ -659,11 +636,11 @@ function saveData() {
   const data = {};
   document.querySelectorAll('[data-field]').forEach(el => {
     const key = el.dataset.field;
+    if (key.startsWith('price_')) return;
     if (el.classList.contains('nfs-toggle')) data[key] = el.classList.contains('checked');
-    else data[key] = el.value;
+    else if (el.value !== undefined) data[key] = el.value;
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  localStorage.setItem(ROTATE_KEY, JSON.stringify(rotations));
   showToast('已儲存');
   document.getElementById('saveStatus').textContent = '上次儲存：' + new Date().toLocaleTimeString('zh-TW');
 }
@@ -682,15 +659,7 @@ function loadData() {
       }
     });
   }
-  const rotRaw = localStorage.getItem(ROTATE_KEY);
-  if (rotRaw) {
-    rotations = JSON.parse(rotRaw);
-    getAllImages().forEach(img => {
-      const key = img.src.split('/').pop();
-      if (rotations[key]) img.style.transform = `rotate(${rotations[key]}deg)`;
-    });
-  }
-  if (raw || rotRaw) document.getElementById('saveStatus').textContent = '已載入先前儲存的資料';
+  if (raw) document.getElementById('saveStatus').textContent = '已載入先前儲存的資料';
 }
 
 
@@ -735,44 +704,24 @@ document.addEventListener('keydown', function(e) {
 });
 
 let lbIndex = 0;
-let lbRotation = 0;
 function getAllImages() {
   return Array.from(document.querySelectorAll('.col-img img'));
-}
-function getImgKey(img) {
-  return img.src.split('/').pop();
 }
 function openLightbox(img) {
   const imgs = getAllImages();
   lbIndex = imgs.indexOf(img);
-  const key = getImgKey(imgs[lbIndex]);
-  lbRotation = rotations[key] || 0;
   showLightboxImage();
   document.getElementById('lightbox').classList.add('active');
 }
 function showLightboxImage() {
   const imgs = getAllImages();
-  const lbImg = document.getElementById('lightbox-img');
-  lbImg.src = imgs[lbIndex].src;
-  const key = getImgKey(imgs[lbIndex]);
-  lbRotation = rotations[key] || 0;
-  lbImg.style.transform = `rotate(${lbRotation}deg)`;
+  document.getElementById('lightbox-img').src = imgs[lbIndex].src;
   document.getElementById('lbCounter').textContent = (lbIndex + 1) + ' / ' + imgs.length;
 }
 function navLightbox(dir) {
   const imgs = getAllImages();
   lbIndex = (lbIndex + dir + imgs.length) % imgs.length;
   showLightboxImage();
-}
-function rotateLightbox() {
-  lbRotation = (lbRotation - 90) % 360;
-  const imgs = getAllImages();
-  const key = getImgKey(imgs[lbIndex]);
-  rotations[key] = lbRotation;
-  document.getElementById('lightbox-img').style.transform = `rotate(${lbRotation}deg)`;
-  imgs[lbIndex].style.transform = `rotate(${lbRotation}deg)`;
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(saveData, 3000);
 }
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('active');
@@ -791,7 +740,8 @@ function exportExcel() {
       idx++;
       const g = (f) => {
         const el = document.querySelector(`[data-field="${f}_${id}"]`);
-        return el ? el.value : '';
+        if (!el) return '';
+        return el.value !== undefined ? el.value : el.textContent;
       };
       const nfsEl = document.querySelector(`[data-field="nfs_${id}"]`);
       const nfs = nfsEl && nfsEl.classList.contains('checked') ? '是' : '';
@@ -817,8 +767,9 @@ function exportExcel() {
 }
 
 function getPrice(tr) {
-  const inp = tr.querySelector('[data-field^="price_f"]');
-  return inp ? Number(inp.value.replace(/[$,]/g, '')) || 0 : 0;
+  const el = tr.querySelector('[data-field^="price_"]');
+  const text = el ? (el.value !== undefined ? el.value : el.textContent) : '0';
+  return Number(text.replace(/[$,]/g, '')) || 0;
 }
 
 function sortAllTables() {
